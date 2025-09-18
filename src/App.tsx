@@ -56,7 +56,8 @@ function App() {
 
     const tick = () => {
       rafId = requestAnimationFrame(tick);
-      const secondsSinceBigBang = BigInt(4.354e17);
+      // https://wmap.gsfc.nasa.gov/universe/uni_age
+      const secondsSinceBigBang = BigInt(4.345e17);
       setTime(BigInt(Math.floor(Date.now() / 1000)) + secondsSinceBigBang);
     };
 
@@ -140,13 +141,15 @@ function App() {
           opacity: 0.5,
         }}
       >
+        Universal Binary Clock, Larix Kortbeek, 2025
+        <br />
+        A binary clock of seconds since the Big Bang
+        <br />
         Last updated:{" "}
         {new Date().toLocaleString("en-US", {
           timeZone: "UTC",
         })}{" "}
         UTC
-        <br />
-        Binary clock of seconds since the Big Bang, Larix Kortbeek, 2025
       </div>
     </div>
   );
