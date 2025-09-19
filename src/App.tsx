@@ -133,84 +133,42 @@ function App() {
   return (
     <div className="app">
       <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          width: `${gridSize * cellSize}px`,
-        }}
+        className="grid-container"
+        style={{ width: `${gridSize * cellSize}px` }}
       >
         {cells.map((cell) => {
           const isOn = !!((smoothedTime >> BigInt(cell)) & BigInt(1));
           return (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                fontSize: "11px",
-                fontFamily: "monospace",
-              }}
-              key={cell}
-            >
+            <div className="cell-container" key={cell}>
               <div
+                className="cell-background"
                 style={{
                   width: `${cellSize}px`,
                   height: `${cellSize}px`,
                   borderRadius: `${cellSize * 0.15}px`,
-                  backgroundColor: "rgba(0,0,0,0.05)",
                   ["cornerShape" as string]: "bevel",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "relative",
-                  overflow: "hidden",
                 }}
                 onMouseEnter={() => setHoveredCell(cell)}
                 onMouseLeave={() => setHoveredCell(null)}
               >
                 <div
-                  style={{
-                    color: "white",
-                    fontSize: "11px",
-                    fontFamily: "monospace",
-                    mixBlendMode: "difference",
-                    opacity: isOn || hoveredCell === cell ? 1 : 0,
-                    transition: "opacity 0.2s ease-in-out",
-                  }}
+                  className={`cell-text ${
+                    isOn || hoveredCell === cell ? "cell-text-visible" : "cell-text-hidden"
+                  }`}
                 >
                   {getTimeScale(cell)}
                 </div>
                 <div
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    backgroundColor: "black",
-                    zIndex: -1,
-                    transformOrigin: isOn ? "0 0" : "100% 100%",
-                    scale: `${isOn ? 1 : 0} 1`,
-                    transition: "scale 0.2s ease-out",
-                    transitionDuration: `${isOn ? 0.5 : 0.1}s`,
-                  }}
+                  className={`cell-fill ${
+                    isOn ? "cell-fill-on" : "cell-fill-off"
+                  }`}
                 />
               </div>
             </div>
           );
         })}
       </div>
-      <div
-        style={{
-          fontSize: "11px",
-          fontFamily: "monospace",
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          padding: "10px",
-          opacity: 0.5,
-        }}
-      >
+      <div className="footer">
         A binary clock of seconds since the Big Bang
         <br />
         <a href="https://larixk.nl" target="_blank">Larix Kortbeek</a>, <a href="https://plusoneamsterdam.com" target="_blank">PlusOne®</a>, Amsterdam, 2025
