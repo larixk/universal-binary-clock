@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
 const getTimeScale = (cellIndex: number) => {
@@ -84,11 +84,6 @@ const events = [
     source: "https://pubmed.ncbi.nlm.nih.gov/29493587/",
   },
   {
-    name: "First heavy elements released",
-    timestamp: BigInt(200) * millionYears + imprecision(1000),
-    source: "https://arxiv.org/abs/1102.4638", // Bromm & Yoshida (2011), review on first stars/early enrichment
-  },
-  {
     name: "Earliest confirmed galaxy",
     timestamp: BigInt(290) * millionYears + imprecision(1000),
     source:
@@ -110,29 +105,9 @@ const events = [
     source: "https://www.science.org/doi/10.1126/sciadv.1602365",
   },
   {
-    name: "Earliest oceans",
-    timestamp: BigInt(9400) * millionYears + imprecision(1000),
-    source: "https://www.geology.wisc.edu/~valley/zircons/Wilde2001Nature.pdf",
-  },
-  {
     name: "Life on Earth",
     timestamp: BigInt(10300) * millionYears + imprecision(1000),
     source: "https://pubmed.ncbi.nlm.nih.gov/11539686/",
-  },
-  {
-    name: "Great Oxidation Event",
-    timestamp: BigInt(11400) * millionYears + imprecision(1000),
-    source: "https://www.pnas.org/doi/10.1073/pnas.1608824114",
-  },
-  {
-    name: "Cambrian Period",
-    timestamp: BigInt(13259) * millionYears + imprecision(1000),
-    source: "https://stratigraphy.org/ICSchart/ChronostratChart2024-12.pdf",
-  },
-  {
-    name: "K–Pg mass extinction",
-    timestamp: BigInt(13734) * millionYears + imprecision(1000),
-    source: "https://www.science.org/doi/pdf/10.1126/science.aaa0118",
   },
   {
     name: "Homo sapiens",
@@ -141,56 +116,92 @@ const events = [
   },
   {
     name: "Great Pyramid of Giza",
-    timestamp: calendarYear(-2600),
+    timestamp: calendarYear(-2600) + imprecision(1000),
     source: "https://www.britannica.com/place/Great-Pyramid-of-Giza",
   },
 
   {
     name: "Renaissance begins",
-    timestamp: calendarYear(1400),
+    timestamp: calendarYear(1400) + imprecision(1000),
     source: "https://www.britannica.com/event/Renaissance-European-history",
   },
   {
-    name: "Scientific Revolution",
-    timestamp: calendarYear(1543),
-    source: "https://www.britannica.com/event/Scientific-Revolution",
-  },
-  {
     name: "Industrial Revolution",
-    timestamp: calendarYear(1760),
+    timestamp: calendarYear(1760) + imprecision(1000),
     source: "https://www.britannica.com/event/Industrial-Revolution",
   },
   {
     name: "Moon landing",
-    timestamp: calendarYear(1969),
+    timestamp: calendarYear(1969) + imprecision(1000),
     source: "https://www.nasa.gov/history/50-years-ago-apollo-11/",
   },
   {
-    name: "Unix Epoch",
-    timestamp: calendarYear(1970),
-    source: "https://en.wikipedia.org/wiki/Unix_time",
-  },
-  {
     name: "World Wide Web",
-    timestamp: calendarYear(1989),
+    timestamp: calendarYear(1989) + imprecision(1000),
     source: "https://www.w3.org/History/1989/proposal.html",
   },
   {
     name: "Human Genome Project completed",
-    timestamp: calendarYear(2003),
+    timestamp: calendarYear(2003) + imprecision(1000),
     source: "https://www.genome.gov/human-genome-project",
   },
 ];
+function easeInOutExpo(x: number): number {
+  return x === 0
+    ? 0
+    : x === 1
+    ? 1
+    : x < 0.5
+    ? Math.pow(2, 20 * x - 10) / 2
+    : (2 - Math.pow(2, -20 * x + 10)) / 2;
+}
+const useSmoothed = (value: bigint) => {
+  const [smoothedValue, setSmoothedValue] = useState(value);
+  const previousValueRef = useRef(value);
+
+  useEffect(() => {
+    const difference = value - previousValueRef.current;
+    const duration = 50;
+
+    console.log(duration);
+    const startTime = Date.now();
+
+    let rafId: number;
+
+    const tick = () => {
+      const now = Date.now();
+      const progress = (now - startTime) / duration;
+      const smoothedProgress = easeInOutExpo(progress);
+      const precision = 10000;
+      setSmoothedValue(
+        previousValueRef.current +
+          (difference * BigInt(Math.round(smoothedProgress * precision))) /
+            BigInt(precision)
+      );
+
+      if (progress < 1) {
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
+      setSmoothedValue(value);
+    };
+
+    tick();
+
+    return () => {
+      previousValueRef.current = value;
+      cancelAnimationFrame(rafId);
+    };
+  }, [value]);
+  return smoothedValue;
+};
 
 function App() {
-  const [eventShown, setEventShown] = useState<
-    (typeof events)[number]["name"] | null
-  >(null);
+  const [eventShown] = useState<(typeof events)[number]["name"] | null>(null);
   const [currentTime, setCurrentTime] = useState(BigInt(0));
   const [hoveredCell, setHoveredCell] = useState<number | null>(null);
 
   const selectedEvent = events.find((event) => event.name === eventShown);
-
   const time = selectedEvent ? selectedEvent.timestamp : currentTime;
 
   useEffect(() => {
@@ -207,35 +218,18 @@ function App() {
   }, []);
 
   const gridSize = 8;
-  const margin = 250;
+  const margin = 120;
 
   const cellSize =
     Math.min(window.innerWidth - margin, window.innerHeight - margin) /
     gridSize;
-  const cellBorder = 1;
 
   const cells = Array.from({ length: gridSize ** 2 }, (_, i) => i);
 
+  const smoothedTime = useSmoothed(time);
+
   return (
     <div className="app">
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          flexWrap: "wrap",
-          justifyContent: "center",
-        }}
-      >
-        {events.map((event) => (
-          <button
-            onClick={() => setEventShown(event.name)}
-            key={event.name}
-            style={{ width: "12em" }}
-          >
-            {event.name}
-          </button>
-        ))}
-      </div>
       <div
         style={{
           display: "flex",
@@ -244,14 +238,13 @@ function App() {
         }}
       >
         {cells.map((cell) => {
-          const isOn = !!((time >> BigInt(cell)) & BigInt(1));
+          const isOn = !!((smoothedTime >> BigInt(cell)) & BigInt(1));
           return (
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: "4px",
                 fontSize: "11px",
                 fontFamily: "monospace",
               }}
@@ -259,30 +252,47 @@ function App() {
             >
               <div
                 style={{
-                  width: `${cellSize - cellBorder * 2}px`,
-                  height: `${cellSize - cellBorder * 2}px`,
-                  borderRadius: `${cellSize * 0.2}px`,
-                  backgroundColor: isOn ? "black" : "rgba(0,0,0,0.05)",
-                  ["cornerShape" as string]: "squircle",
+                  width: `${cellSize}px`,
+                  height: `${cellSize}px`,
+                  borderRadius: `${cellSize * 0.15}px`,
+                  backgroundColor: "rgba(0,0,0,0.05)",
+                  ["cornerShape" as string]: "bevel",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  position: "relative",
+                  overflow: "hidden",
                 }}
                 onMouseEnter={() => setHoveredCell(cell)}
                 onMouseLeave={() => setHoveredCell(null)}
               >
-                {(isOn || hoveredCell === cell) && (
-                  <div
-                    style={{
-                      color: "white",
-                      fontSize: "11px",
-                      fontFamily: "monospace",
-                      mixBlendMode: "difference",
-                    }}
-                  >
-                    {getTimeScale(cell)}
-                  </div>
-                )}
+                <div
+                  style={{
+                    color: "white",
+                    fontSize: "11px",
+                    fontFamily: "monospace",
+                    mixBlendMode: "difference",
+                    opacity: isOn || hoveredCell === cell ? 1 : 0,
+                    transition: "opacity 0.2s ease-in-out",
+                  }}
+                >
+                  {getTimeScale(cell)}
+                </div>
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    backgroundColor: "black",
+                    zIndex: -1,
+                    transformOrigin: isOn ? "0 0" : "100% 100%",
+                    scale: `${isOn ? 1 : 0} 1`,
+                    transition: "scale 0.2s ease-out",
+                    transitionDuration: `${isOn ? 0.5 : 0.1}s`,
+                  }}
+                />
               </div>
             </div>
           );
