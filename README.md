@@ -1,69 +1,62 @@
-# React + TypeScript + Vite
+# Universal Binary Clock
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A binary clock implementation counting seconds since the Big Bang using JavaScript BigInt arithmetic.
 
-Currently, two official plugins are available:
+## Implementation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Time is represented as a 64-bit integer where each bit corresponds to a power of 2 seconds. The visualization displays an 8×8 grid where each cell represents one bit position. Time scales range from seconds to billions of years.
 
-## Expanding the ESLint configuration
+## Functionality
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Binary representation of time as powers of 2 seconds
+- Time scale from seconds to gigayears
+- Exponential easing for time transitions
+- Cell hover displays corresponding time scales
+- Real-time updates synchronized to Unix epoch + cosmic offset
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Time Scales
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Each cell represents a power of 2 seconds, covering these scales:
+- s - seconds
+- m - minutes  
+- h - hours
+- d - days
+- a - years
+- ka - kiloyears
+- Ma - megayears
+- Ga - gigayears
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Technical Specifications
+
+- JavaScript BigInt for integer calculations
+- React 19 with functional components
+- TypeScript with inline prop definitions
+- Vite build system
+- Custom easing functions for transitions
+
+
+## Development
+
+```bash
+# Install dependencies
+yarn install
+
+# Start development server
+yarn dev
+
+# Build for production
+yarn build
+
+# Preview production build
+yarn preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Notes
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Mathematical abstraction of cosmic time as binary patterns. Reduces temporal complexity to integer representation.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Built by Larix Kortbeek, September 2025.
+
+## License
+
+MIT License.
