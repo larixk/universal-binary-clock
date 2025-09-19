@@ -17,10 +17,10 @@ a {
 
 .grid-container {
   display: grid;
-  height: 100%;
+  width: min(100vh - 16em, 100vw - 16em);
+  height: min(100vh - 16em, 100vw - 16em);
   aspect-ratio: 1;
   gap: 0.25em;
-  padding: 8em;
 }
 
 .cell {
