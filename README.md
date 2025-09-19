@@ -2,8 +2,6 @@
 
 A binary clock of seconds since the Big Bang, visualized as an 8×8 grid where each cell corresponds to a power of 2 seconds in a 64-bit integer representation.
 
-## Scientific Basis
-
 The implementation uses the universe age estimate of 13.78 billion years from [Planck 2018 results (published 2020)](https://www.aanda.org/articles/aa/full_html/2020/09/aa33910-18/aa33910-18.html).
 
 Time unit abbreviations follow ISO/IEC 80000-3:2019:
