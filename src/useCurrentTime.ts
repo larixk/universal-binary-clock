@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { unixEpoch } from "../constants/time";
+import { unixEpoch } from "./time";
 
 export const useCurrentTime = () => {
   const [currentTime, setCurrentTime] = useState(BigInt(0));
