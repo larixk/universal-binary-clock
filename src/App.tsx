@@ -16,22 +16,20 @@ function App() {
     <div className="app">
       <div
         className="grid-container"
-        style={{ width: `${gridSize * cellSize}px` }}
+        style={{
+          gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+          gridTemplateRows: `repeat(${gridSize}, 1fr)`,
+        }}
       >
         {Array.from({ length: gridSize ** 2 }, (_, cellIndex) => {
           const isOn = !!((smoothedValue >> BigInt(cellIndex)) & BigInt(1));
           return (
             <div
-              className={`cell-container ${isOn ? "cell-on" : "cell-off"}`}
+              className={`cell ${isOn ? "cell-on" : "cell-off"}`}
               key={cellIndex}
             >
-              <div
-                className="cell-background"
-                style={{ width: `${cellSize}px`, height: `${cellSize}px` }}
-              >
-                <div className="cell-text">{getTimeScale(cellIndex)}</div>
-                <div className="cell-fill" />
-              </div>
+              <div className="cell-text">{getTimeScale(cellIndex)}</div>
+              <div className="cell-fill" />
             </div>
           );
         })}
