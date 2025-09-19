@@ -32,6 +32,8 @@ a {
   justify-content: center;
   position: relative;
   overflow: hidden;
+  border-radius: 15%;
+  corner-shape: bevel;
 }
 
 .cell-text {
@@ -40,13 +42,14 @@ a {
   font-family: monospace;
   mix-blend-mode: difference;
   transition: opacity 0.2s ease-in-out;
-}
-
-.cell-text-hidden {
   opacity: 0;
 }
 
-.cell-text-visible {
+.cell-on .cell-text {
+  opacity: 1;
+}
+
+.cell-background:hover .cell-text {
   opacity: 1;
 }
 
@@ -61,13 +64,13 @@ a {
   transition: scale 0.2s ease-out;
 }
 
-.cell-fill-on {
+.cell-on .cell-fill {
   transform-origin: 0 0;
   scale: 1 1;
   transition-duration: 0.5s;
 }
 
-.cell-fill-off {
+.cell-off .cell-fill {
   transform-origin: 100% 100%;
   scale: 0 1;
   transition-duration: 0.1s;
