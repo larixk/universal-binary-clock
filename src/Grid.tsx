@@ -1,4 +1,4 @@
-const circleScale = (index: number, total: number) => Math.sqrt((index + 1) / total);
+const circleScale = (index: number, total: number) => ((index + 1) / total) ** 0.9 + 0.1;
 const checkIsBitSet = (value: bigint, position: number) => {
   return !!((value >> BigInt(position)) & BigInt(1));
 };

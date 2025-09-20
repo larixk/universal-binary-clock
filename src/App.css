@@ -38,7 +38,8 @@ a {
 
   overflow: hidden;
 
-  filter: drop-shadow(0 2vh 2vh rgba(255, 255, 255, 1));
+  filter: drop-shadow(0 3vh 2vh rgba(255, 255, 255, 1));
+  transition: translate 2s ease-out;
 }
 
 .cell-fill {
@@ -47,15 +48,15 @@ a {
   left: 0;
   right: 0;
   top: 0;
-  background-color: black;
+  background-color: rgba(0, 0, 0, 1);
   z-index: -1;
-  transition: scale 0.2s ease-out;
+  transition: scale 2s ease-out;
 }
 
 .cell-on .cell-fill {
-  transform-origin: 0 0%;
+  transform-origin: 50% 0%;
   scale: 1 1;
-  transition-duration: 0.5s;
+  transition-duration: 1s;
 }
 
 .cell-off {
@@ -63,9 +64,9 @@ a {
 }
 
 .cell-off .cell-fill {
-  transform-origin: 100% 100%;
+  transform-origin: 50% 0%;
   scale: 1 0;
-  transition-duration: 0.25s;
+  transition-duration: 1s;
 }
 
 .footer {
@@ -74,6 +75,7 @@ a {
   bottom: 0;
   left: 0;
   padding: 10px;
+  color: white;
 }
 
 @media (pointer: fine) and (hover: hover) {
