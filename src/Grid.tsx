@@ -1,5 +1,4 @@
-import { getTimeScale } from "./timeScale";
-
+const circleScale = (index: number, total: number) => ((index + 1) / total) ** 0.9 + 0.1;
 const checkIsBitSet = (value: bigint, position: number) => {
   return !!((value >> BigInt(position)) & BigInt(1));
 };
@@ -21,9 +20,13 @@ function Grid({ value }: { value: bigint }) {
             className={`cell ${
               checkIsBitSet(value, bitIndex) ? "cell-on" : "cell-off"
             }`}
+            style={{
+              scale: `${circleScale(bitIndex, gridSize ** 2) * 1} ${circleScale(bitIndex, gridSize ** 2) * 0.125}`,
+              translate: `0 ${(bitIndex / gridSize ** 2 - 0.5) * 100}%`,
+              zIndex: gridSize ** 2 - bitIndex,
+            }}
             key={bitIndex}
           >
-            <div className="cell-text">{getTimeScale(bitIndex)}</div>
             <div className="cell-fill" />
           </div>
         );
